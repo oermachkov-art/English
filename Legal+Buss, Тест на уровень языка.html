@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Level Test · Олег</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1828;
+    --card: #211f33;
+    --accent: #e8c547;
+    --accent2: #7c6af7;
+    --text: #fffffe;
+    --muted: #a7a9be;
+    --correct: #4caf88;
+    --wrong: #e05c5c;
+    --radius: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -40%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,106,247,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -30%; left: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,197,71,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .container { width: 100%; max-width: 680px; position: relative; z-index: 1; }
+  .screen { display: none; animation: fadeUp 0.5s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .intro-badge {
+    display: inline-block;
+    background: rgba(232,197,71,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(232,197,71,0.3);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 900; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .intro-desc { color: var(--muted); font-size: 16px; line-height: 1.7; margin-bottom: 36px; max-width: 480px; }
+  .intro-meta { display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+  .meta-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: #0f0e17;
+    border: none; padding: 16px 36px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.01em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(232,197,71,0.3); }
+  .btn:active { transform: translateY(0); }
+  .btn-tg {
+    background: #2AABEE; color: #fff;
+  }
+  .btn-tg:hover { box-shadow: 0 12px 32px rgba(42,171,238,0.3); }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+  .q-counter { font-size: 13px; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+  .q-level-tag { background: rgba(124,106,247,0.2); color: var(--accent2); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; }
+  .progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 40px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .question-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 36px; margin-bottom: 20px; }
+  .question-text { font-family: 'Playfair Display', serif; font-size: clamp(18px, 3vw, 22px); font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
+  .question-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 14px 20px;
+    cursor: pointer; transition: all 0.18s;
+    font-size: 15px; color: var(--text);
+    text-align: left; display: flex; align-items: center; gap: 12px;
+  }
+  .option-letter {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    flex-shrink: 0; transition: all 0.18s;
+  }
+  .option:hover:not(.disabled) { border-color: var(--accent2); background: rgba(124,106,247,0.1); }
+  .option:hover:not(.disabled) .option-letter { background: var(--accent2); color: white; }
+  .option.selected { border-color: var(--accent2); background: rgba(124,106,247,0.15); }
+  .option.selected .option-letter { background: var(--accent2); color: white; }
+  .option.correct { border-color: var(--correct); background: rgba(76,175,136,0.12); }
+  .option.correct .option-letter { background: var(--correct); color: white; }
+  .option.wrong { border-color: var(--wrong); background: rgba(224,92,92,0.1); }
+  .option.wrong .option-letter { background: var(--wrong); color: white; }
+  .option.disabled { cursor: default; }
+  .next-btn {
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.15); color: var(--text);
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    display: none; margin-top: 8px;
+  }
+  .next-btn.visible { display: inline-flex; align-items: center; gap: 8px; }
+  .next-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RESULT */
+  .result-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 40px; text-align: center; margin-bottom: 24px; }
+  .result-level-badge { display: inline-block; font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .result-level-name { font-size: 18px; color: var(--muted); margin-bottom: 24px; font-weight: 300; }
+  .result-score { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .result-desc { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.85); max-width: 480px; margin: 0 auto 28px; }
+  .result-modules { background: rgba(124,106,247,0.1); border: 1px solid rgba(124,106,247,0.2); border-radius: 12px; padding: 20px 24px; text-align: left; margin-bottom: 24px; }
+  .modules-title { font-size: 12px; color: var(--accent2); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+  .module-tag { display: inline-block; background: rgba(124,106,247,0.2); border: 1px solid rgba(124,106,247,0.3); color: #b8b0ff; padding: 5px 12px; border-radius: 100px; font-size: 13px; margin: 3px; }
+
+  /* MISTAKES */
+  .mistakes-section { margin-bottom: 24px; }
+  .mistakes-toggle {
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.12); color: var(--muted);
+    width: 100%; padding: 14px 20px; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mistakes-toggle:hover { border-color: var(--accent2); color: var(--text); }
+  .mistakes-list { display: none; margin-top: 12px; }
+  .mistakes-list.open { display: block; }
+  .mistake-item {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 10px;
+  }
+  .mistake-q { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .mistake-level-tag { display: inline-block; background: rgba(124,106,247,0.2); color: var(--accent2); padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 600; margin-right: 8px; }
+  .mistake-row { display: flex; gap: 10px; font-size: 13px; flex-wrap: wrap; }
+  .mistake-wrong-ans { color: var(--wrong); display: flex; align-items: center; gap: 5px; }
+  .mistake-correct-ans { color: var(--correct); display: flex; align-items: center; gap: 5px; }
+
+  /* CTA */
+  .cta-block { background: linear-gradient(135deg, rgba(232,197,71,0.08), rgba(124,106,247,0.12)); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); padding: 28px 32px; }
+  .cta-inner { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+  .cta-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; object-position: center top; border: 2px solid var(--accent); flex-shrink: 0; }
+  .cta-text-block { text-align: left; }
+  .cta-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .cta-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .cta-contacts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .contact-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+  .contact-icon { font-size: 16px; }
+  .cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+  .retry-btn { background: transparent; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; margin-top: 16px; text-decoration: underline; text-underline-offset: 3px; display: block; text-align: center; width: 100%; }
+  .retry-btn:hover { color: var(--text); }
+  .score-bar-wrap { margin: 20px 0; }
+  .score-bar-bg { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- INTRO SCREEN -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-badge">🎓 Тест на уровень английского</div>
+    <h1>Проверьте свой <em>уровень</em> за 5 минут</h1>
+    <p class="intro-desc">20 вопросов по грамматике, лексике и пониманию контекста. По результатам вы узнаете свой уровень по шкале CEFR и получите персональную рекомендацию.</p>
+    <div class="intro-meta">
+      <div class="meta-item"><div class="meta-dot"></div> 20 вопросов</div>
+      <div class="meta-item"><div class="meta-dot" style="background:var(--accent)"></div> A1 → C1</div>
+      <div class="meta-item"><div class="meta-dot" style="background:var(--correct)"></div> ~5 минут</div>
+    </div>
+    <button class="btn" onclick="startQuiz()">Начать тест →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <span class="q-counter" id="q-counter">Вопрос 1 из 20</span>
+      <span class="q-level-tag" id="q-level-tag">A1</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="q-text"></div>
+      <div class="question-sub" id="q-sub"></div>
+      <div class="options" id="q-options"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий вопрос →</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="screen" id="screen-result">
+    <div class="result-card">
+      <div class="result-level-badge" id="r-level"></div>
+      <div class="result-level-name" id="r-level-name"></div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-bg"><div class="score-bar-fill" id="r-bar" style="width:0%"></div></div>
+      </div>
+      <div class="result-score" id="r-score"></div>
+      <div class="result-desc" id="r-desc"></div>
+      <div class="result-modules">
+        <div class="modules-title">Рекомендуемые модули</div>
+        <div id="r-modules"></div>
+      </div>
+    </div>
+
+    <!-- MISTAKES -->
+    <div class="mistakes-section">
+      <button class="mistakes-toggle" onclick="toggleMistakes(this)">
+        <span>📋 Посмотреть ошибки и разбор</span>
+        <span id="mistakes-arrow">▼</span>
+      </button>
+      <div class="mistakes-list" id="mistakes-list"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-block">
+      <div class="cta-inner">
+        <img class="cta-photo" id="cta-photo" src="" alt="Олег" />
+        <div class="cta-text-block">
+          <div class="cta-title">Готовы начать занятия?</div>
+          <div class="cta-sub">Первый урок — бесплатно. Олег подберёт программу под ваш уровень и цели.</div>
+        </div>
+      </div>
+      <div class="cta-contacts">
+        <div class="contact-row"><span class="contact-icon">📱</span><span>+7 (964) 551-85-80 — предпочтительно писать, не звонить</span></div>
+        <div class="contact-row"><span class="contact-icon">✈️</span><span>Telegram: @sl_gosseLuc</span></div>
+      </div>
+      <div class="cta-buttons">
+        <button class="btn btn-tg" onclick="window.open('https://t.me/sl_gosseLuc', '_blank')">✈️ Написать в Telegram</button>
+      </div>
+    </div>
+    <button class="retry-btn" onclick="restartQuiz()">Пройти тест заново</button>
+  </div>
+
+</div>
+
+<script>
+// Embed photo as base64
+document.getElementById('cta-photo').src = 'data:image/jpeg;base64,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';
+
+const questions = [
+  // A1
+  { level:'A1', text:'What ___ your name?', sub:'Choose the correct word.', options:['is','are','am','be'], correct:0 },
+  { level:'A1', text:'She ___ a student.', sub:'Choose the correct verb.', options:['am','is','are','be'], correct:1 },
+  { level:'A1', text:'___ you speak English?', sub:'Choose the correct auxiliary verb.', options:['Do','Does','Are','Is'], correct:0 },
+  { level:'A1', text:'I have ___ apple and ___ orange.', sub:'Fill in the blanks with the correct article.', options:['a / a','an / an','a / an','an / a'], correct:1 },
+
+  // A2
+  { level:'A2', text:'They ___ to the cinema last night.', sub:'Choose the correct form.', options:['go','went','gone','going'], correct:1 },
+  { level:'A2', text:'I have been ___ London twice.', sub:'Present Perfect — choose the correct preposition.', options:['to','in','at','into'], correct:0 },
+  { level:'A2', text:'She is taller ___ her sister.', sub:'Comparative adjective.', options:['that','then','than','as'], correct:2 },
+  { level:'A2', text:'___ is the nearest pharmacy?', sub:'Asking for directions.', options:['What','Where','Who','Which'], correct:1 },
+
+  // B1
+  { level:'B1', text:'If I ___ more money, I would travel the world.', sub:'Second conditional.', options:['have','had','will have','would have'], correct:1 },
+  { level:'B1', text:'The report ___ by the manager yesterday.', sub:'Choose the correct passive form.', options:['wrote','is written','was written','has written'], correct:2 },
+  { level:'B1', text:'I suggested ___ earlier to avoid traffic.', sub:'Verb + gerund.', options:['to leave','leave','leaving','left'], correct:2 },
+  { level:'B1', text:'Despite ___ tired, she finished the project.', sub:'Concessive clause.', options:['be','being','to be','been'], correct:1 },
+
+  // B2
+  { level:'B2', text:'By the time we arrived, the film ___.', sub:'Past perfect.', options:['already started','had already started','has already started','already starts'], correct:1 },
+  { level:'B2', text:'He denied ___ the money from the safe.', sub:'Verb pattern.', options:['to take','take','taking','having taken'], correct:3 },
+  { level:'B2', text:'The suspect is said ___ the country before the arrest.', sub:'Passive reporting verb.', options:['leaving','to leave','to have left','have left'], correct:2 },
+  { level:'B2', text:'___ no further objections, the motion was passed unanimously.', sub:'Absolute construction.', options:['There being','There were','Being','Having'], correct:0 },
+
+  // C1
+  { level:'C1', text:'The legislation was enacted ___ curb corporate tax evasion.', sub:'Formal purpose clause.', options:['so as to','for to','in order that','with a view of'], correct:0 },
+  { level:'C1', text:'Had the contract been signed earlier, the dispute ___ avoided.', sub:'Third conditional (inverted).', options:['could be','could have been','would be','might be'], correct:1 },
+  { level:'C1', text:'The board is reportedly considering ___ the merger following regulatory pushback.', sub:'Formal vocabulary.', options:['abolishing','scrapping','cancelling','annulling'], correct:1 },
+  { level:'C1', text:"The witness's account was at ___ with the forensic evidence presented in court.", sub:'Fixed expression.', options:['odds','variance','conflict','dispute'], correct:0 },
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+
+function startQuiz() {
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('q-counter').textContent = 'Вопрос ' + (current+1) + ' из ' + questions.length;
+  document.getElementById('q-level-tag').textContent = q.level;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-sub').textContent = q.sub;
+  document.getElementById('progress-fill').style.width = ((current / questions.length) * 100) + '%';
+
+  const optDiv = document.getElementById('q-options');
+  optDiv.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach(function(opt, i) {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="option-letter">' + letters[i] + '</span>' + opt;
+    btn.onclick = function() { selectAnswer(i, btn); };
+    optDiv.appendChild(btn);
+  });
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.classList.remove('visible');
+  nextBtn.textContent = current === questions.length - 1 ? '📊 Посмотреть результат →' : 'Следующий вопрос →';
+  answered = false;
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const allOpts = document.querySelectorAll('.option');
+
+  allOpts.forEach(function(o) { o.classList.add('disabled'); });
+
+  userAnswers[current] = idx;
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    allOpts[q.correct].classList.add('correct');
+  }
+
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function toggleMistakes(btn) {
+  const list = document.getElementById('mistakes-list');
+  const arrow = document.getElementById('mistakes-arrow');
+  list.classList.toggle('open');
+  arrow.textContent = list.classList.contains('open') ? '▲' : '▼';
+}
+
+function showResult() {
+  showScreen('screen-result');
+  const pct = score / questions.length;
+
+  let level, levelName, desc, modules;
+
+  if (pct <= 0.2) {
+    level='A1'; levelName='Beginner — Начинающий';
+    desc='Вы только начинаете знакомство с английским языком. Базовые конструкции ещё формируются — это абсолютно нормально. С правильным подходом прогресс будет заметен уже через несколько недель.';
+    modules=['Английский: основная часть','Английский для школьников'];
+  } else if (pct <= 0.35) {
+    level='A2'; levelName='Elementary — Элементарный';
+    desc='Вы знаете базовые слова и простые конструкции, можете общаться на знакомые темы. Словарный запас и грамматика требуют системной работы.';
+    modules=['Английский: основная часть','Разговорный английский'];
+  } else if (pct <= 0.55) {
+    level='B1'; levelName='Intermediate — Средний';
+    desc='Вы уверенно понимаете основные идеи и можете общаться в большинстве стандартных ситуаций. Грамматика иногда пробуксовывает на сложных конструкциях.';
+    modules=['Разговорный английский','Английский: основная часть','Бизнес-английский'];
+  } else if (pct <= 0.70) {
+    level='B2'; levelName='Upper-Intermediate — Выше среднего';
+    desc='Вы свободно общаетесь на большинство тем, понимаете оригинальные тексты и речь носителей. Остались нюансы с формальным языком и сложными конструкциями.';
+    modules=['Бизнес-английский','Разговорный английский','Английский для юристов'];
+  } else if (pct <= 0.85) {
+    level='C1'; levelName='Advanced — Продвинутый';
+    desc='Вы владеете языком на высоком уровне: понимаете имплицитные смыслы, работаете с профессиональными текстами. Остаются отдельные слепые пятна в специализированной лексике.';
+    modules=['Английский для юристов','Бизнес-английский'];
+  } else {
+    level='C1+'; levelName='Proficient — Профессиональный';
+    desc='Отличный результат! Вы владеете языком практически на уровне носителя. Акцент имеет смысл сделать на профессиональной и юридической лексике.';
+    modules=['Английский для юристов','Бизнес-английский'];
+  }
+
+  document.getElementById('r-level').textContent = level;
+  document.getElementById('r-level-name').textContent = levelName;
+  document.getElementById('r-score').textContent = 'Правильных ответов: ' + score + ' из ' + questions.length;
+  document.getElementById('r-desc').textContent = desc;
+
+  setTimeout(function() {
+    document.getElementById('r-bar').style.width = Math.round(pct*100) + '%';
+  }, 300);
+
+  const modDiv = document.getElementById('r-modules');
+  modDiv.innerHTML = modules.map(function(m) { return '<span class="module-tag">🎯 ' + m + '</span>'; }).join('');
+
+  // Build mistakes list
+  const mistakesList = document.getElementById('mistakes-list');
+  const letters = ['A','B','C','D'];
+  let mistakesHTML = '';
+  let mistakeCount = 0;
+
+  questions.forEach(function(q, i) {
+    const ua = userAnswers[i];
+    if (ua !== q.correct) {
+      mistakeCount++;
+      const userAns = ua !== undefined ? q.options[ua] : '(не отвечено)';
+      const correctAns = q.options[q.correct];
+      mistakesHTML += '<div class="mistake-item">' +
+        '<div class="mistake-q"><span class="mistake-level-tag">' + q.level + '</span>В' + (i+1) + '. ' + q.text + '</div>' +
+        '<div class="mistake-row">' +
+        '<span class="mistake-wrong-ans">✗ Ваш ответ: ' + userAns + '</span>' +
+        '<span style="color:var(--muted)">→</span>' +
+        '<span class="mistake-correct-ans">✓ Правильно: ' + correctAns + '</span>' +
+        '</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin-top:8px;">' + q.sub + '</div>' +
+        '</div>';
+    }
+  });
+
+  const toggleBtn = document.querySelector('.mistakes-toggle span:first-child');
+  if (mistakeCount === 0) {
+    toggleBtn.textContent = '🎉 Ошибок нет — всё верно!';
+    document.querySelector('.mistakes-toggle').style.pointerEvents = 'none';
+    document.querySelector('.mistakes-toggle').style.opacity = '0.6';
+    document.getElementById('mistakes-arrow').textContent = '';
+  } else {
+    toggleBtn.textContent = '📋 Разбор ошибок (' + mistakeCount + ')';
+    mistakesList.innerHTML = mistakesHTML;
+  }
+}
+
+function restartQuiz() {
+  current = 0; score = 0; answered = false; userAnswers = [];
+  showScreen('screen-intro');
+}
+</script>
+</body>
+</html>

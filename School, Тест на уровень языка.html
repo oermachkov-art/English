@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>English Level Test · Школьники · Олег</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Inter:wght@400;500&display=swap');
+:root{--bg:#f0f4ff;--card:#fff;--acc:#4f6ef7;--acc2:#ff6b9d;--text:#1a1d2e;--muted:#6b7280;--ok:#22c97a;--no:#ff4d6d;--r:20px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden}
+body::before{content:"";position:fixed;top:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(79,110,247,0.12) 0%,transparent 70%);pointer-events:none}
+.wrap{width:100%;max-width:660px;position:relative;z-index:1}
+.screen{display:none}
+.screen.active{display:block;animation:fu 0.45s ease}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.iem{font-size:52px;margin-bottom:16px;display:block}
+.itag{display:inline-block;background:rgba(79,110,247,0.1);color:var(--acc);border:1.5px solid rgba(79,110,247,0.2);padding:5px 14px;border-radius:100px;font-size:13px;font-weight:600;margin-bottom:20px}
+h1{font-family:"Nunito",system-ui,sans-serif;font-size:clamp(30px,6vw,50px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h1 span{color:var(--acc)}
+.desc{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:28px;max-width:460px}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px}
+.pill{background:#fff;border:1.5px solid rgba(0,0,0,0.08);padding:8px 14px;border-radius:100px;font-size:14px;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--acc);color:#fff;border:none;padding:16px 34px;border-radius:100px;font-family:"Nunito",system-ui,sans-serif;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(79,110,247,0.35);-webkit-appearance:none;transition:transform 0.15s}
+.btn:active{transform:scale(0.97)}
+.btn-tg{background:#2AABEE;box-shadow:0 8px 24px rgba(42,171,238,0.3)}
+.qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.qnum{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+.qlvl{background:var(--acc);color:#fff;padding:4px 14px;border-radius:100px;font-size:12px;font-weight:800}
+.pbar{height:6px;background:rgba(0,0,0,0.08);border-radius:3px;margin-bottom:24px;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:3px;transition:width 0.4s ease}
+.qcard{background:#fff;border-radius:var(--r);padding:28px;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,0.08);border:1.5px solid rgba(0,0,0,0.05)}
+.qtxt{font-family:"Nunito",system-ui,sans-serif;font-size:clamp(16px,3vw,20px);font-weight:800;line-height:1.4;margin-bottom:6px}
+.qsub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:#f8f9ff;border:2px solid rgba(0,0,0,0.07);border-radius:14px;padding:14px 16px;cursor:pointer;font-size:15px;color:var(--text);font-weight:500;text-align:left;display:flex;align-items:center;gap:12px;width:100%;-webkit-appearance:none;transition:border-color 0.18s}
+.opt:active:not(.disabled){background:rgba(79,110,247,0.07)}
+.oltr{width:30px;height:30px;border-radius:10px;background:rgba(79,110,247,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--acc);flex-shrink:0;transition:all 0.18s}
+.opt.correct{border-color:var(--ok);background:rgba(34,201,122,0.07)}
+.opt.correct .oltr{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--no);background:rgba(255,77,109,0.06)}
+.opt.wrong .oltr{background:var(--no);color:#fff}
+.opt.disabled{cursor:default}
+.nbtn{background:#fff;border:2px solid rgba(0,0,0,0.1);color:var(--text);padding:13px 26px;border-radius:100px;font-family:"Nunito",system-ui,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:none;margin-top:4px;-webkit-appearance:none}
+.nbtn.show{display:inline-flex;align-items:center;gap:8px}
+.rtop{background:#fff;border-radius:var(--r);padding:32px;text-align:center;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.rem{font-size:54px;margin-bottom:10px;display:block}
+.rlvl{font-family:"Nunito",system-ui,sans-serif;font-size:58px;font-weight:900;color:var(--acc);line-height:1;margin-bottom:6px}
+.rlvln{font-size:17px;color:var(--muted);margin-bottom:18px;font-weight:500}
+.sbarw{margin:14px 0 18px}
+.sbarbg{height:10px;background:rgba(0,0,0,0.07);border-radius:5px;overflow:hidden}
+.sbarfill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width 1.1s ease}
+.rscore{font-size:14px;color:var(--muted);margin-bottom:18px}
+.rdesc{font-size:15px;line-height:1.7;color:var(--text);max-width:460px;margin:0 auto 22px}
+.rmods{background:rgba(79,110,247,0.06);border:1.5px solid rgba(79,110,247,0.15);border-radius:14px;padding:16px 18px;text-align:left}
+.modtitle{font-size:11px;color:var(--acc);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.modtag{display:inline-block;background:rgba(79,110,247,0.1);border:1.5px solid rgba(79,110,247,0.2);color:var(--acc);padding:5px 12px;border-radius:100px;font-size:13px;font-weight:600;margin:3px}
+.merrsec{margin:14px 0}
+.merrtog{background:#fff;border:2px solid rgba(0,0,0,0.08);color:var(--muted);width:100%;padding:14px 18px;border-radius:14px;font-family:"Inter",system-ui,sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.05);-webkit-appearance:none}
+.merrlist{display:none;margin-top:10px}
+.merrlist.open{display:block}
+.merritem{background:#fff;border:1.5px solid rgba(0,0,0,0.07);border-radius:14px;padding:14px 16px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.merrq{font-size:14px;font-weight:600;margin-bottom:8px}
+.merrltag{display:inline-block;background:rgba(79,110,247,0.1);color:var(--acc);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;margin-right:6px}
+.merrrow{display:flex;gap:10px;font-size:13px;flex-wrap:wrap;align-items:center}
+.merrw{color:var(--no);font-weight:600}
+.merrc{color:var(--ok);font-weight:600}
+.ctablock{background:#fff;border-radius:var(--r);padding:24px;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.ctainner{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.ctaphoto{width:66px;height:66px;border-radius:50%;object-fit:cover;object-position:center top;border:3px solid var(--acc);flex-shrink:0}
+.ctatitle{font-family:"Nunito",system-ui,sans-serif;font-size:18px;font-weight:800;margin-bottom:4px}
+.ctasub{font-size:13px;color:var(--muted);line-height:1.5}
+.ctacons{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.ctacon{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.retbtn{background:transparent;border:none;color:var(--muted);font-family:"Inter",system-ui,sans-serif;font-size:14px;cursor:pointer;margin-top:8px;text-decoration:underline;text-underline-offset:3px;display:block;text-align:center;width:100%;-webkit-appearance:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="screen active" id="s-intro">
+    <span class="iem">📚</span>
+    <div class="itag">🎓 Тест для школьников · 14–18 лет</div>
+    <h1>Узнай свой <span>уровень</span> английского!</h1>
+    <p class="desc">20 вопросов — и ты узнаешь, на каком уровне твой английский. Никаких подсказок, просто честный результат 😊</p>
+    <div class="pills">
+      <div class="pill">📝 20 вопросов</div>
+      <div class="pill">⏱ ~5 минут</div>
+      <div class="pill">🏆 A1 → C1</div>
+      <div class="pill">✅ Разбор ошибок</div>
+    </div>
+    <button class="btn" id="start-btn">Поехали! →</button>
+  </div>
+
+  <div class="screen" id="s-quiz">
+    <div class="qhdr">
+      <span class="qnum" id="qnum">Вопрос 1 из 20</span>
+      <span class="qlvl" id="qlvl">A1</span>
+    </div>
+    <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+    <div class="qcard">
+      <div class="qtxt" id="qtxt"></div>
+      <div class="qsub" id="qsub"></div>
+      <div class="opts" id="qopts"></div>
+    </div>
+    <button class="nbtn" id="nbtn">Следующий →</button>
+  </div>
+
+  <div class="screen" id="s-result">
+    <div class="rtop">
+      <span class="rem" id="rem"></span>
+      <div class="rlvl" id="rlvl"></div>
+      <div class="rlvln" id="rlvln"></div>
+      <div class="sbarw"><div class="sbarbg"><div class="sbarfill" id="sbar" style="width:0%"></div></div></div>
+      <div class="rscore" id="rscore"></div>
+      <div class="rdesc" id="rdesc"></div>
+      <div class="rmods"><div class="modtitle">Что стоит прокачать</div><div id="rmods"></div></div>
+    </div>
+    <div class="merrsec">
+      <button class="merrtog" id="merrtog">
+        <span id="merrlabel">📋 Разбор ошибок</span>
+        <span id="merrarrow">▼</span>
+      </button>
+      <div class="merrlist" id="merrlist"></div>
+    </div>
+    <div class="ctablock">
+      <div class="ctainner">
+        <img class="ctaphoto" src="data:image/jpeg;base64,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" alt="Олег">
+        <div>
+          <div class="ctatitle">Хочешь улучшить результат?</div>
+          <div class="ctasub">Первый урок с Олегом — бесплатно! Разберём слабые места и составим план.</div>
+        </div>
+      </div>
+      <div class="ctacons">
+        <div class="ctacon"><span>📱</span><span>+7 (964) 551-85-80 — лучше написать</span></div>
+        <div class="ctacon"><span>✈️</span><span>Telegram: @sl_gosseLuc</span></div>
+      </div>
+      <button class="btn btn-tg" id="tg-btn">✈️ Написать в Telegram</button>
+    </div>
+    <button class="retbtn" id="ret-btn">Пройти тест заново</button>
+  </div>
+</div>
+<script>
+var qs=[
+  {l:"A1",t:"How ___ you?",s:"Выбери правильное слово.",o:["is","am","are","be"],c:2},
+  {l:"A1",t:"I ___ a dog. His name is Max.",s:"Выбери правильный глагол.",o:["has","have","am","is"],c:1},
+  {l:"A1",t:"There ___ ten students in the class.",s:"Выбери правильный глагол.",o:["is","am","are","be"],c:2},
+  {l:"A1",t:"She ___ to school every day.",s:"Present Simple — выбери правильную форму.",o:["go","goes","going","went"],c:1},
+  {l:"A2",t:"We ___ a great film last Saturday.",s:"Past Simple — выбери правильную форму.",o:["watch","watches","watched","watching"],c:2},
+  {l:"A2",t:"I have never ___ sushi before.",s:"Present Perfect — выбери правильную форму.",o:["eat","ate","eating","eaten"],c:3},
+  {l:"A2",t:"My brother is ___ than me.",s:"Сравнительная степень прилагательного.",o:["tall","more tall","taller","tallest"],c:2},
+  {l:"A2",t:"___ you like some tea?",s:"Вежливое предложение — выбери правильный вариант.",o:["Do","Would","Will","Are"],c:1},
+  {l:"B1",t:"I wish I ___ more free time after school.",s:"Wish + Past Simple — выбери правильную форму.",o:["have","had","will have","would have"],c:1},
+  {l:"B1",t:"The homework ___ already been done by Tom.",s:"Present Perfect Passive — выбери правильный глагол.",o:["is","was","has","had"],c:2},
+  {l:"B1",t:"He asked me where I ___ from.",s:"Reported Speech — выбери правильную форму.",o:["am","is","was","were"],c:2},
+  {l:"B1",t:"If I were you, I ___ study harder.",s:"Second Conditional — выбери правильный вариант.",o:["will","would","should","could"],c:1},
+  {l:"B2",t:"By next year, I ___ English for five years.",s:"Future Perfect — выбери правильную форму.",o:["will study","will have studied","have studied","am studying"],c:1},
+  {l:"B2",t:"She ___ be tired — she worked all night.",s:"Modal verb of deduction — выбери правильный вариант.",o:["can","could","must","should"],c:2},
+  {l:"B2",t:"Not only ___ she win the competition, but she also broke the record.",s:"Инверсия — выбери правильный порядок слов.",o:["she did","did she","she has","has she"],c:1},
+  {l:"B2",t:"I ___ rather you didn't talk during the lesson.",s:"Выбери правильный вспомогательный глагол.",o:["will","would","should","could"],c:1},
+  {l:"C1",t:"___ the bad weather, the school trip went ahead as planned.",s:"Формальный союз — выбери правильный вариант.",o:["Although","Despite","Even though","However"],c:1},
+  {l:"C1",t:"Had she revised more, she ___ the exam.",s:"Третий тип условного (инвертированная форма).",o:["would pass","will have passed","would have passed","had passed"],c:2},
+  {l:"C1",t:"The essay was well-written, ___ a few minor grammar mistakes.",s:"Выбери правильный предлог.",o:["aside","apart from","except","besides from"],c:1},
+  {l:"C1",t:"The results were ___ better than we had expected.",s:"Выбери правильное наречие-усилитель.",o:["very","far","much more","so much"],c:1}
+];
+var cur=0,scr=0,ans=false,ua=[];
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function render(){
+  var q=qs[cur];
+  document.getElementById("qnum").textContent="Вопрос "+(cur+1)+" из "+qs.length;
+  document.getElementById("qlvl").textContent=q.l;
+  document.getElementById("qtxt").textContent=q.t;
+  document.getElementById("qsub").textContent=q.s;
+  document.getElementById("pfill").style.width=((cur/qs.length)*100)+"%";
+  var d=document.getElementById("qopts");
+  d.innerHTML="";
+  var lt=["A","B","C","D"];
+  for(var i=0;i<q.o.length;i++){
+    (function(i){
+      var b=document.createElement("button");
+      b.className="opt";
+      b.innerHTML="<span class='oltr'>"+lt[i]+"</span>"+q.o[i];
+      b.addEventListener("click",function(){pick(i,b);});
+      d.appendChild(b);
+    })(i);
+  }
+  var nb=document.getElementById("nbtn");
+  nb.className="nbtn";
+  nb.textContent=cur===qs.length-1?"🏆 Посмотреть результат!":"Следующий →";
+  ans=false;
+}
+
+function pick(i,btn){
+  if(ans)return;
+  ans=true;
+  var q=qs[cur];
+  var all=document.querySelectorAll(".opt");
+  for(var k=0;k<all.length;k++) all[k].classList.add("disabled");
+  ua[cur]=i;
+  if(i===q.c){btn.classList.add("correct");scr++;}
+  else{btn.classList.add("wrong");all[q.c].classList.add("correct");}
+  document.getElementById("nbtn").className="nbtn show";
+}
+
+function next(){
+  cur++;
+  if(cur>=qs.length)result();
+  else render();
+}
+
+function result(){
+  show("s-result");
+  var pct=scr/qs.length;
+  var lv,ln,em,desc,mods;
+  if(pct<=0.2){lv="A1";ln="Beginner — Начинающий";em="🌱";desc="Ты только начинаешь свой путь в английском — и это отличный старт! Пока сложно с базовыми словами и глаголами, но всё приходит с практикой.";mods=["Артикли и местоимения","Present Simple / To be","Базовая лексика"];}
+  else if(pct<=0.35){lv="A2";ln="Elementary — Элементарный";em="🚀";desc="Базу ты уже знаешь — умеешь строить простые предложения и понимаешь знакомые темы. Теперь важно выйти за рамки школьной программы и заговорить увереннее!";mods=["Past Simple vs Present Perfect","Сравнительные степени","Разговорные фразы"];}
+  else if(pct<=0.55){lv="B1";ln="Intermediate — Средний";em="⚡";desc="Крепкий средний уровень — можешь общаться на большинство тем и понимаешь иностранные фильмы и песни. Немного грамматики — и B2 уже близко!";mods=["Reported Speech","Conditional II и III","Passive Voice"];}
+  else if(pct<=0.70){lv="B2";ln="Upper-Intermediate — Выше среднего";em="🔥";desc="Отличный результат! Ты уверенно говоришь, понимаешь нативных спикеров и читаешь оригинальные тексты. Самое время готовиться к FCE или IELTS!";mods=["Подготовка к FCE / IELTS","Сложные конструкции","Академическая лексика"];}
+  else if(pct<=0.85){lv="C1";ln="Advanced — Продвинутый";em="🏆";desc="Очень высокий уровень — ты явно много занимался! Выражаешься точно и понимаешь тонкие нюансы языка. Можно смело готовиться к CAE или поступлению за рубежом.";mods=["Подготовка к CAE","Инверсия и сложные структуры","Идиомы и устойчивые выражения"];}
+  else{lv="C1+";ln="Proficient — Мастер!";em="🌟";desc="Фантастика! Твой английский на уровне, о котором многие только мечтают. Пора ставить новые цели — CAE или IELTS на 8+?";mods=["CAE / IELTS 8+","Академическое письмо","Разговорный C2"];}
+  document.getElementById("rem").textContent=em;
+  document.getElementById("rlvl").textContent=lv;
+  document.getElementById("rlvln").textContent=ln;
+  document.getElementById("rscore").textContent="Правильных ответов: "+scr+" из "+qs.length;
+  document.getElementById("rdesc").textContent=desc;
+  setTimeout(function(){document.getElementById("sbar").style.width=Math.round(pct*100)+"%";},300);
+  document.getElementById("rmods").innerHTML=mods.map(function(m){return"<span class='modtag'>📌 "+m+"</span>";}).join("");
+  var ml=document.getElementById("merrlist");
+  var mh="",mc=0;
+  for(var i=0;i<qs.length;i++){
+    var q=qs[i];
+    if(ua[i]!==q.c){
+      mc++;
+      var uw=ua[i]!==undefined?q.o[ua[i]]:"(нет ответа)";
+      mh+="<div class='merritem'><div class='merrq'><span class='merrltag'>"+q.l+"</span>В"+(i+1)+". "+q.t+"</div><div style='font-size:12px;color:var(--muted);margin-bottom:8px'>"+q.s+"</div><div class='merrrow'><span class='merrw'>✗ "+uw+"</span><span style='color:#d1d5db'>→</span><span class='merrc'>✓ "+q.o[q.c]+"</span></div></div>";
+    }
+  }
+  if(mc===0){document.getElementById("merrlabel").textContent="🎉 Ни одной ошибки — ты крут!";document.getElementById("merrtog").style.opacity="0.6";document.getElementById("merrtog").style.pointerEvents="none";document.getElementById("merrarrow").textContent="";}
+  else{document.getElementById("merrlabel").textContent="📋 Разбор ошибок ("+mc+")";ml.innerHTML=mh;}
+}
+
+document.getElementById("start-btn").addEventListener("click",function(){show("s-quiz");render();});
+document.getElementById("nbtn").addEventListener("click",next);
+document.getElementById("merrtog").addEventListener("click",function(){
+  var l=document.getElementById("merrlist");
+  l.classList.toggle("open");
+  document.getElementById("merrarrow").textContent=l.classList.contains("open")?"▲":"▼";
+});
+document.getElementById("tg-btn").addEventListener("click",function(){window.open("https://t.me/sl_gosseLuc","_blank");});
+document.getElementById("ret-btn").addEventListener("click",function(){cur=0;scr=0;ans=false;ua=[];show("s-intro");});
+</script>
+</body>
+</html>
